@@ -39,21 +39,21 @@ public class User implements Serializable {
 
     @NotEmpty(message = "El campo <nombre> no puede estar vacío")
     @Size(min = 4, max = 25, message = "El nombre debe contener entre 4 y 25 caracteres")
-    private String nombre;
+    private String name;
 
     @NotEmpty(message = "El campo <apellidos> no puede estar vacío")
     @Size(min = 4, max = 25, message = "Los apellidos debe contener entre 4 y 25 caracteres")
-    private String apellidos;
+    private String surnames;
 
     @NotEmpty(message = "El campo <correo> no puede estar vacío")
     @Size(min = 4, max = 25, message = "El correo debe contener entre 4 y 25 caracteres")
-    private String correo;
+    private String email;
 
     @NotEmpty(message = "El campo <contraseña> no puede estar vacío")
-    private String contraseña;
+    private String password;
 
     @NotEmpty(message = "El campo <ciudad> no puede estar vacía")
-    private String ciudad;
+    private String city;
 
     // 1. RELACION USER-DEPARTMENT
 

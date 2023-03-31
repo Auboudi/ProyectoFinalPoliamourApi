@@ -32,7 +32,7 @@ public class Hobbie implements Serializable{
 
     @NotEmpty(message = "El campo <nombre> no puede estar vacío")
     @Size(min = 4, max = 25, message = "El nombre debe contener entre 4 y 25 caracteres")
-    private String nombre;
+    private String name;
 
 
     //RELACION HOBBIE - USER

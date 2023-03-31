@@ -32,7 +32,7 @@ public class Phone implements Serializable {
 
     @NotEmpty(message = "El campo <numero> no puede estar vacío")
     @Size(min = 9, max = 15, message = "El numero debe contener entre 9 y 15 caracteres")
-    private String numero;
+    private String number;
 
 
     //RELACION HOBBIE - USER
