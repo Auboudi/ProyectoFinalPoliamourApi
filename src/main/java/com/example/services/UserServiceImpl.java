@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dao.UserDao;
 import com.example.entities.User;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -29,19 +32,17 @@ return userDao.findAll(sort);    }
         return userDao.findById(id);
     }
 
+    @Transactional
     @Override
     public User save(User user) {
         return userDao.save(user);
     }
 
+    @Transactional
     @Override
     public void delete(User user) {
         userDao.delete(user);
     }
 
-    @Override
-    public void deletebyId(long id) {
-        userDao.deleteById(id);
-    }
 
 }
