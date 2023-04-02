@@ -1,5 +1,10 @@
 package com.example.dao;
 
-public interface DepartamentoDao {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.entities.Departamento;
+
+public interface DepartamentoDao extends JpaRepository<Departamento, Long>   {
+    
     
 }
