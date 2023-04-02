@@ -22,7 +22,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll(Sort sort) {
-return userDao.findAll(sort);    }
+    return userDao.findAll(sort);    
+    }
 
     @Override
     public User findbyId(long id) {
