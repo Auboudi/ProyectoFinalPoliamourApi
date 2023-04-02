@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.entities.Phone;
 
-public interface TelefonoDao extends JpaRepository <Phone, Long> {
+public interface PhoneDao extends JpaRepository <Phone, Long> {
     
 }
