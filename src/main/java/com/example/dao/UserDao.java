@@ -26,6 +26,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone where p.id= :id")
     public User findById(long id);
+    
 
 
 }
