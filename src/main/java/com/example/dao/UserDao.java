@@ -12,7 +12,7 @@ import com.example.entities.User;
 
 public interface UserDao extends JpaRepository<User, Long> {
      //Recupera lista de usuarios ordenados
-     @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone")
+     @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbies left join fetch u.yards left join fetch u.phones")
      public List<User> findAll(Sort sort);
 
 
@@ -24,7 +24,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     //El metodo siguiente recupera el usuario por ID, para que nos traiga el resto de tablas
 
-    @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone where p.id= :id")
+    @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone where u.id= :id")
     public User findById(long id);
 
 
