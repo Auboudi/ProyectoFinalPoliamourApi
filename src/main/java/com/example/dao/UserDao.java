@@ -17,15 +17,15 @@ public interface UserDao extends JpaRepository<User, Long> {
 
 
     //Recupera una pagina de usuarios
-    @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone",
-     countQuery = "select count(u) from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone")
-     public Page<User> findAll(Pageable pageable);
+    //@Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone",
+     //countQuery = "select count(u) from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone")
+     //public Page<User> findAll(Pageable pageable);
 
 
     //El metodo siguiente recupera el usuario por ID, para que nos traiga el resto de tablas
 
-    @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone where p.id= :id")
-    public User findById(long id);
+    //@Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone where p.id= :id")
+    //public User findById(long id);
 
 
 }
