@@ -13,12 +13,13 @@ import com.example.entities.User;
 public interface UserDao extends JpaRepository<User, Long> {
      //Recupera lista de usuarios ordenados
      @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbies left join fetch u.yards left join fetch u.phones")
+     @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbies left join fetch u.yards left join fetch u.phones")
      public List<User> findAll(Sort sort);
 
 
     //Recupera una pagina de usuarios
-    @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone",
-     countQuery = "select count(u) from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone")
+    @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbies left join fetch u.yards left join fetch u.phones",
+    countQuery = "select count(u) from User u left join u.department left join u.hobbies left join u.yards left join u.phones")
      public Page<User> findAll(Pageable pageable);
 
 
@@ -26,6 +27,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbie left join fetch u.yard left join fetch u.phone where u.id= :id")
     public User findById(long id);
+    
 
 
 }

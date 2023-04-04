@@ -2,6 +2,8 @@ package com.example.entities;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,6 +40,7 @@ public class Phone implements Serializable {
     //RELACION HOBBIE - USER
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonIgnore
     private User user; 
     
 }
