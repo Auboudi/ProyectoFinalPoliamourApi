@@ -19,7 +19,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     //Recupera una pagina de usuarios
     @Query(value = "select u from User u left join fetch u.department left join fetch u.hobbies left join fetch u.yards left join fetch u.phones",
-     countQuery = "select count(u) from User u left join  u.department left join fetch u.hobbies left join u.yards left join u.phones")
+     countQuery = "select count(u) from User u left join  u.department left join u.hobbies left join u.yards left join u.phones")
 
      public Page<User> findAll(Pageable pageable);
 
