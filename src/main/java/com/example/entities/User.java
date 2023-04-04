@@ -55,26 +55,41 @@ public class User implements Serializable {
     @NotEmpty(message = "El campo <ciudad> no puede estar vacía")
     private String city;
 
+    private String imageUser;
+
     // 1. RELACION USER-DEPARTMENT
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Department department;
 
     // 2. RELACION USER-YARDS (MANYTOMANY)
+
     @JoinTable(
         name = "rel_yards_users",
         joinColumns = @JoinColumn(name = "Yards", nullable = false),
         inverseJoinColumns = @JoinColumn(name="Users", nullable = false)
     )
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     List<Yard> yards;
 
-    // 3. RELACION USER - TELEFONOS Y USER HOBBIES
+    // 3. RELACION USER - HOBBIES
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
     @JsonIgnore
     private List<Hobbie> hobbies;
+
+    // 4. RELACION USER - PHONES
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
     @JsonIgnore
     private List<Phone> phones;
+
+    // 5. RELACION USER - POSTS
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
+    @JsonIgnore
+    private List<Post> posts;
+
+    
 }
