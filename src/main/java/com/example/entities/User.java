@@ -67,6 +67,7 @@ public class User implements Serializable {
         inverseJoinColumns = @JoinColumn(name="yard_id", nullable = false)
     )
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    
     List<Yard> yards;
     
 
