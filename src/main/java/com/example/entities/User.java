@@ -3,8 +3,6 @@ package com.example.entities;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -55,6 +52,10 @@ public class User implements Serializable {
     @NotEmpty(message = "El campo <ciudad> no puede estar vacía")
     private String city;
 
+    private List<String> hobbie;
+
+    private String phone;
+
     // 1. RELACION USER-DEPARTMENT
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -70,13 +71,4 @@ public class User implements Serializable {
     
     List<Yard> yards;
     
-
-    // 3. RELACION USER - TELEFONOS Y USER HOBBIES
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
-    @JsonIgnore
-    private List<Hobbie> hobbies;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
-    @JsonIgnore
-    private List<Phone> phones;
 }
