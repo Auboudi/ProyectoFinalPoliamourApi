@@ -3,6 +3,8 @@ package com.example.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,11 +41,13 @@ public class Yard implements Serializable {
     // 1. RELACION YARD-DEPARTMENT
 
     @ManyToOne(fetch =FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonIgnore
     Department department; 
 
     // 2. RELACION YARD-USER (MANYTOMANY)
 
     @ManyToMany(mappedBy = "yards")
+    @JsonIgnore
     List<User> users;
 
 }

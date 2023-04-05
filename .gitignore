@@ -34,3 +34,6 @@ build/
 *.properties
 
 
+
+### Añadir el application properties ###
+*/properties

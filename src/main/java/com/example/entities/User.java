@@ -66,12 +66,14 @@ public class User implements Serializable {
 
     @JoinTable(
         name = "rel_yards_users",
-        joinColumns = @JoinColumn(name = "Yards", nullable = false),
-        inverseJoinColumns = @JoinColumn(name="Users", nullable = false)
+        joinColumns = @JoinColumn(name = "user_id", nullable = false),
+        inverseJoinColumns = @JoinColumn(name="yard_id", nullable = false)
     )
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    
     List<Yard> yards;
+    
 
     // 3. RELACION USER - HOBBIES
 
