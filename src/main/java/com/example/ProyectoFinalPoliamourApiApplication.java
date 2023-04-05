@@ -12,8 +12,6 @@ import com.example.entities.Department;
 import com.example.entities.User;
 import com.example.entities.Yard;
 import com.example.services.DepartmentService;
-import com.example.services.HobbieService;
-import com.example.services.PhoneService;
 import com.example.services.UserService;
 import com.example.services.YardService;
 
@@ -77,6 +75,9 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 
 		List<Yard> listaYard2 = new ArrayList<>();
 		listaYard2.add(yard3);
+
+		List<String> hobbie = new ArrayList<>();
+
 		
 		userService.save(User.builder()
 			.id(1)
@@ -87,6 +88,8 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 			.city("Murcia")
 			.department(departmentService.findbyId(1))
 			.yards(listaYard1)
+			.hobbie(hobbie)
+			.phone("677888999")
 			.build());
 
 		userService.save(User.builder()
@@ -97,6 +100,8 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 			.password("password2")
 			.city("Valencia")
 			.department(departmentService.findbyId(2))
+			.phone("654632981")
+			.hobbie(hobbie)
 			.build());
 
 		userService.save(User.builder()
