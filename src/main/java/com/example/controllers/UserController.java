@@ -137,6 +137,43 @@ public class UserController {
         return responseEntity;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable(name = "id") Integer id) {
+
+        ResponseEntity<Map<String, Object>> responseEntity = null;
+
+        Map<String, Object> responseAsMap = new HashMap<>();
+
+        try {
+
+            User user = userService.findbyId(id);
+
+            if (user != null) {
+                String successMessage = "Se ha encontrado el Usuario con id: " + id + " correctamente";
+                responseAsMap.put("mensaje", successMessage);
+                responseAsMap.put("user", user);
+                // responseAsMap.put("mascotas", cliente.getMascotas());
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+
+            } else {
+
+                String errorMessage = "No se ha encontrado el usuario con id: " + id;
+                responseAsMap.put("error", errorMessage);
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.NOT_FOUND);
+
+            }
+
+        } catch (Exception e) {
+
+            String errorGrave = "Error grave";
+            responseAsMap.put("error", errorGrave);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
+        return responseEntity;
+    }    
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody User user,
