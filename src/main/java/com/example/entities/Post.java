@@ -1,9 +1,7 @@
 package com.example.entities;
 
-import java.io.Serializable;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -11,8 +9,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,29 +23,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "posts")
 
-public class Yard implements Serializable {
-
+public class Post implements Serializable {
+    
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotEmpty(message = "El campo <nombre> no puede estar vacío")
-    @Size(min = 4, max = 25, message = "El nombre debe contener entre 4 y 25 caracteres")
-    private String name;
+    @NotEmpty(message = "El mensaje no puede estar vacío")
+    @Size(max = 500, message = "El mensaje debe contener un máximo de 500 caracteres")
+    private String text;
 
-    // 1. RELACION YARD-DEPARTMENT
+    private String imagePost;
 
-    @ManyToOne(fetch =FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JsonIgnore
-    Department department; 
 
-    // 2. RELACION YARD-USER (MANYTOMANY)
+    //RELACION POST - USER
 
-    @ManyToMany(mappedBy = "yards")
-    @JsonIgnore
-    List<User> users;
-
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private User user; 
+    
 }

@@ -3,6 +3,8 @@ package com.example.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -56,19 +59,32 @@ public class User implements Serializable {
 
     private String phone;
 
+    private String imageUser;
+
     // 1. RELACION USER-DEPARTMENT
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     private Department department;
 
     // 2. RELACION USER-YARDS (MANYTOMANY)
+
     @JoinTable(
         name = "rel_yards_users",
         joinColumns = @JoinColumn(name = "user_id", nullable = false),
         inverseJoinColumns = @JoinColumn(name="yard_id", nullable = false)
     )
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     
     List<Yard> yards;
+    
+
+
+
+    // 5. RELACION USER - POSTS
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
+    @JsonIgnore
+    private List<Post> posts;
+
     
 }

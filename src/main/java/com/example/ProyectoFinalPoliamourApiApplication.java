@@ -76,42 +76,89 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 		List<Yard> listaYard2 = new ArrayList<>();
 		listaYard2.add(yard3);
 
+		List<String> hobbiesUser1 = new ArrayList<>();
+		hobbiesUser1.add("baloncesto");
+		hobbiesUser1.add("lectura");
+
 		
 		userService.save(User.builder()
 			.id(1)
-			.name("Nombre1")
-			.surnames("Apellido1")
-			.email("correo1")
+			.name("Marina")
+			.surnames("Giner")
+			.email("marinaginer@gmail.com")
 			.password("password1")
 			.city("Murcia")
 			.department(departmentService.findbyId(1))
 			.yards(listaYard1)
-			.hobbie(null)
+			.hobbie(hobbiesUser1)
 			.phone("677888999")
 			.build());
 
+		List<String> hobbiesUser2 = new ArrayList<>();
+		hobbiesUser2.add("futbol");
+		hobbiesUser2.add("lectura");
+
 		userService.save(User.builder()
 			.id(2)
-			.name("Nombre2")
-			.surnames("Apellido2")
-			.email("correo2")
+			.name("Paloma")
+			.surnames("Galan")
+			.email("palomagalan@gmail.com")
 			.password("password2")
 			.city("Valencia")
 			.department(departmentService.findbyId(2))
+			.hobbie(hobbiesUser2)
 			.phone("654632981")
 			.build());
 
+		List<String> hobbiesUser3 = new ArrayList<>();
+		hobbiesUser3.add("senderismo");
+		hobbiesUser3.add("equitacion");
+		
+
 		userService.save(User.builder()
 			.id(3)
-			.name("Nombre3")
-			.surnames("Apellido3")
-			.email("correo3")
+			.name("Maria")
+			.surnames("Romero")
+			.email("mariaromero@gmail.com")
 			.password("password3")
 			.city("Murcia")
 			.department(departmentService.findbyId(1))
+			.hobbie(hobbiesUser3)
 			.yards(listaYard2)
 			.build());
+
+		List<String> hobbiesUser4 = new ArrayList<>();
+		hobbiesUser4.add("equitacion");
+			
+	
+		userService.save(User.builder()
+			.id(4)
+			.name("Alex")
+			.surnames("Sanchez")
+			.email("alexsanchez@gmail.com")
+			.password("password3")				
+			.city("Murcia")
+			.department(departmentService.findbyId(1))
+			.hobbie(hobbiesUser4)				
+			.yards(listaYard2)
+			.build());	
+
+			
+
 		
+		userService.save(User.builder()
+			.id(5)
+			.name("Sheila")
+			.surnames("Nuñez")
+			.email("sheilanuñez@gmail.com")
+			.password("password1")
+			.city("Valencia")
+			.department(departmentService.findbyId(2))
+			.phone("677888999")
+			.build());
+
+
+
 
 
 		
