@@ -223,11 +223,11 @@ public class UserController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Map<String, Object>> update(@Valid @RequestPart(name = "user") User user,
+    public ResponseEntity<Map<String, Object>> update(
+            @Valid @RequestPart(name = "user") User user,
             BindingResult result, 
             @RequestPart(name = "fileUser", required = false) MultipartFile fileUser,
-            @RequestPart(name = "department", required = true) Department department,
-            @RequestPart(name = "yards", required = false) List<Yard> yards,
+
             @PathVariable(name = "id") Integer id) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
@@ -263,10 +263,15 @@ public class UserController {
 
         user.setId(id);
         User userDB = userService.save(user);
+
         
         try {
 
             if (userDB != null) {
+
+                Department department = userDB.getDepartment();
+                List<Yard> yards = userDB.getYards();
+
                 if(department != null) {
 
                         departmentService.save(department);
@@ -281,12 +286,20 @@ public class UserController {
                     userDB.setYards(yards);
                 }
 
+
                 String message = "El usuario se ha actualizado correctamente";
                 responseAsMap.put("mensaje", message);
                 responseAsMap.put("usuario", userDB);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
 
             } else {
+
+                String errorMensaje = "El usuario no se ha actualizado correctamente";
+
+                responseAsMap.put("mensaje", errorMensaje);
+
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
+                        HttpStatus.INTERNAL_SERVER_ERROR);               
 
             }
 
