@@ -76,8 +76,6 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 		List<Yard> listaYard2 = new ArrayList<>();
 		listaYard2.add(yard3);
 
-		List<String> hobbie = new ArrayList<>();
-
 		
 		userService.save(User.builder()
 			.id(1)
@@ -88,7 +86,7 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 			.city("Murcia")
 			.department(departmentService.findbyId(1))
 			.yards(listaYard1)
-			.hobbie(hobbie)
+			.hobbie(null)
 			.phone("677888999")
 			.build());
 
@@ -101,7 +99,6 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 			.city("Valencia")
 			.department(departmentService.findbyId(2))
 			.phone("654632981")
-			.hobbie(hobbie)
 			.build());
 
 		userService.save(User.builder()
