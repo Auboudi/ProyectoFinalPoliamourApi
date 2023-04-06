@@ -58,7 +58,7 @@ public class User implements Serializable {
 
     // 1. RELACION USER-DEPARTMENT
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     private Department department;
 
     // 2. RELACION USER-YARDS (MANYTOMANY)
@@ -67,7 +67,7 @@ public class User implements Serializable {
         joinColumns = @JoinColumn(name = "user_id", nullable = false),
         inverseJoinColumns = @JoinColumn(name="yard_id", nullable = false)
     )
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     
     List<Yard> yards;
     
