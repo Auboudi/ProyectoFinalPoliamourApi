@@ -8,8 +8,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Component
 public class FileUploadUtil {
 
     public String saveFile(String fileName, MultipartFile multipartFile)

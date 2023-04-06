@@ -1,17 +1,21 @@
 package com.example.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -23,10 +27,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.entities.Department;
 import com.example.entities.User;
+import com.example.entities.Yard;
+import com.example.model.FileUploadResponse;
+import com.example.services.DepartmentService;
 import com.example.services.UserService;
+import com.example.services.YardService;
+import com.example.utilities.FileDownloadUtil;
+import com.example.utilities.FileUploadUtil;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -38,6 +51,19 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileUploadUtil fileUploadUtil;
+
+    @Autowired
+    private FileDownloadUtil fileDownloadUtil;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private YardService yardService;
+
 
     @GetMapping
     public ResponseEntity<List<User>> findAll(@RequestParam(name = "page", required = false) Integer page,
@@ -76,9 +102,12 @@ public class UserController {
 
     }
 
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     @Transactional
-    public ResponseEntity<Map<String, Object>> insert(@Valid @RequestBody User user, BindingResult result) {
+    public ResponseEntity<Map<String, Object>> insert(@Valid 
+                @RequestPart(name = "user") User user, 
+                BindingResult result,
+                @RequestPart(name = "fileUser", required = false) MultipartFile fileUser) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -100,6 +129,24 @@ public class UserController {
 
             return responseEntity;
 
+        }
+
+        if(!fileUser.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(fileUser.getOriginalFilename(), fileUser);
+            user.setImageUser(fileCode + "-" + fileUser.getOriginalFilename());
+
+            FileUploadResponse fileUploadResponse = FileUploadResponse
+                        .builder()
+                        .fileName(fileCode + "-" + fileUser.getOriginalFilename())
+                        .downloadURI("/users/downloadFile/")
+                        .size(fileUser.getSize())
+                        .build();
+
+            // NOTA PARA EL GRUPO: Creo que debemos devolver la info y cuando implementemos el 
+            // security poner una validación que solo pueda descargar la imagen el propio usuario.
+            // preguntaremos a Victor (no stress)
+
+            responseAsMap.put("info de la imagen: ", fileUploadResponse);
         }
 
         User userDB = userService.save(user);
@@ -176,8 +223,12 @@ public class UserController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody User user,
-            BindingResult result, @PathVariable(name = "id") Integer id) {
+    public ResponseEntity<Map<String, Object>> update(@Valid @RequestPart(name = "user") User user,
+            BindingResult result, 
+            @RequestPart(name = "fileUser", required = false) MultipartFile fileUser,
+            @RequestPart(name = "department", required = true) Department department,
+            @RequestPart(name = "yards", required = false) List<Yard> yards,
+            @PathVariable(name = "id") Integer id) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
@@ -196,14 +247,41 @@ public class UserController {
             return responseEntity;
         }
 
+        if(!fileUser.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(fileUser.getOriginalFilename(), fileUser);
+            user.setImageUser(fileCode + "-" + fileUser.getOriginalFilename());
+
+            FileUploadResponse fileUploadResponse = FileUploadResponse
+                        .builder()
+                        .fileName(fileCode + "-" + fileUser.getOriginalFilename())
+                        .downloadURI("/users/downloadFile/")
+                        .size(fileUser.getSize())
+                        .build();
+
+            responseAsMap.put("info de la imagen: ", fileUploadResponse);
+        }
+
         user.setId(id);
         User userDB = userService.save(user);
-
+        
         try {
 
             if (userDB != null) {
+                if(department != null) {
 
-                String message = "El usuario se ha creado correctamente";
+                        departmentService.save(department);
+                        userDB.setDepartment(department);
+                    }
+
+                if(yards.size() != 0) {
+                
+                    for(Yard yard : yards) {
+                        yardService.save(yard);
+                    }
+                    userDB.setYards(yards);
+                }
+
+                String message = "El usuario se ha actualizado correctamente";
                 responseAsMap.put("mensaje", message);
                 responseAsMap.put("usuario", userDB);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
@@ -250,6 +328,34 @@ public class UserController {
         
 
     }
+
+    // NOTA PARA EL GRUPO:
+    // Lo dicho antes, preguntamos a Victor si podemos hacer que 
+    // solo lo pueda descargar el usuario que la ha subido
+    @GetMapping("/downloadFile/{fileCode}")
+    public ResponseEntity<?> downloadFile(@PathVariable(name = "fileCode") String fileCode) {
+
+        Resource resource = null;
+
+        try {
+            resource = fileDownloadUtil.getFileAsResource(fileCode);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+        if (resource == null) {
+            return new ResponseEntity<>("File not found ", HttpStatus.NOT_FOUND);
+        }
+
+        String contentType = "application/octet-stream";
+        String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
+
+        return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(contentType))
+        .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+        .body(resource);
+
+    }  
 
 
 }

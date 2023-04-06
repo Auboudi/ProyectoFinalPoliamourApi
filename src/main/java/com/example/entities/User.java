@@ -78,8 +78,6 @@ public class User implements Serializable {
     List<Yard> yards;
     
 
-
-
     // 5. RELACION USER - POSTS
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
