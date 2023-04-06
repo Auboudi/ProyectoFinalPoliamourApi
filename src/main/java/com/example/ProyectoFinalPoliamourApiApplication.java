@@ -106,7 +106,7 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 			.id(3)
 			.name("Nombre3")
 			.surnames("Apellido3")
-			.email("correo3")
+			.email("correoo3")
 			.password("password3")
 			.city("Murcia")
 			.department(departmentService.findbyId(1))
