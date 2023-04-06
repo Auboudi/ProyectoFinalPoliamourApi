@@ -228,7 +228,7 @@ public class UserController {
             BindingResult result, 
             @RequestPart(name = "fileUser", required = false) MultipartFile fileUser,
             @RequestPart(name = "department", required = true) Department department,
-        @RequestPart(name = "yards", required = false) List<Yard> yards,
+            @RequestPart(name = "yards", required = false) List<Yard> yards,
 
             @PathVariable(name = "id") Integer id) throws IOException {
 
