@@ -228,7 +228,7 @@ public class PostController {
             BindingResult result, 
             @RequestPart(name = "filePost", required = false) MultipartFile filePost,
          
-            @RequestPart(name = "user", required = true) User user,
+            @RequestPart(name = "user", required = false) User user,
 
             @PathVariable(name = "id") Integer id) throws IOException {
 
@@ -320,10 +320,10 @@ public class PostController {
             if (post != null) {
    
                 postService.delete(post);
-                responseEntity = new ResponseEntity<String>("Usuario borrado exitosamente", HttpStatus.OK);
+                responseEntity = new ResponseEntity<String>("Post borrado exitosamente", HttpStatus.OK);
             } else {
   
-                responseEntity = new ResponseEntity<String>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+                responseEntity = new ResponseEntity<String>("Post no encontrado", HttpStatus.NOT_FOUND);
             }
 
         } catch (DataAccessException e) {
