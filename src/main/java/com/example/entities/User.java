@@ -3,10 +3,8 @@ package com.example.entities;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -68,7 +66,6 @@ public class User implements Serializable {
     // 1. RELACION USER-DEPARTMENT
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-  
     private Department department;
 
     // 2. RELACION USER-YARDS (MANYTOMANY)
@@ -79,8 +76,6 @@ public class User implements Serializable {
         inverseJoinColumns = @JoinColumn(name="yard_id", nullable = false)
     )
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    
-    
     List<Yard> yards;
     
 
