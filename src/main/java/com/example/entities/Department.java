@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -41,11 +42,13 @@ public class Department implements Serializable {
     //1. RELACIÓN DEPARTMENT-USER
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "department")
     @JsonIgnore
+  
     private List<User> users;
 
     //2.RELACION DEPARTMENT-YARD
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "department")
     @JsonIgnore
+   
     private List<Yard> yards;
 
 }

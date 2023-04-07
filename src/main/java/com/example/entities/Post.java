@@ -45,7 +45,7 @@ public class Post implements Serializable {
 
 
     //RELACION POST - USER
-
+    
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     private User user; 
     
