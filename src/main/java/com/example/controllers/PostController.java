@@ -69,12 +69,12 @@ public class PostController {
 
         List<Post> posts= new ArrayList<>();
 
-        Sort sortByName = Sort.by("name");
+        Sort sortById = Sort.by("id");
 
         if (page != null && size != null) {
 
             try {
-                Pageable pageable = PageRequest.of(page, size, sortByName);
+                Pageable pageable = PageRequest.of(page, size, sortById);
                 Page<Post> postsPaginados = postService.findAll(pageable);
                 posts= postsPaginados.getContent();
                 responseEntity = new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
@@ -86,7 +86,7 @@ public class PostController {
 
             try {
 
-                posts = postService.findAll(sortByName);
+                posts = postService.findAll(sortById);
 
                 responseEntity = new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 

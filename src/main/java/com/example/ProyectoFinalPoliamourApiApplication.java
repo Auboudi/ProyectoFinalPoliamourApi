@@ -9,9 +9,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.entities.Department;
+import com.example.entities.Post;
 import com.example.entities.User;
 import com.example.entities.Yard;
 import com.example.services.DepartmentService;
+import com.example.services.PostService;
 import com.example.services.UserService;
 import com.example.services.YardService;
 
@@ -26,6 +28,9 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 
 	@Autowired
 	private YardService yardService;
+
+	@Autowired
+	private PostService postService;
 
 
 
@@ -156,6 +161,14 @@ public class ProyectoFinalPoliamourApiApplication  implements CommandLineRunner{
 			.department(departmentService.findbyId(2))
 			.phone("677888999")
 			.build());
+
+		postService.save(Post.builder()
+			.id(1)
+			.text("Hola, esto es un post.")
+			.user(userService.findbyId(1))
+			.build());
+		
+
 
 
 
