@@ -30,13 +30,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.entities.Department;
+import com.example.entities.Post;
 import com.example.entities.User;
-import com.example.entities.Yard;
 import com.example.model.FileUploadResponse;
-import com.example.services.DepartmentService;
+import com.example.services.PostService;
 import com.example.services.UserService;
-import com.example.services.YardService;
 import com.example.utilities.FileDownloadUtil;
 import com.example.utilities.FileUploadUtil;
 
@@ -44,12 +42,12 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/posts")
 
-public class UserController {
+public class PostController {
 
     @Autowired
-    private UserService userService;
+    private PostService postService;
 
     @Autowired
     private FileUploadUtil fileUploadUtil;
@@ -58,29 +56,28 @@ public class UserController {
     private FileDownloadUtil fileDownloadUtil;
 
     @Autowired
-    private DepartmentService departmentService;
+    private UserService userService;
 
-    @Autowired
-    private YardService yardService;
-
+    
+//METODO FINDALL 
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll(@RequestParam(name = "page", required = false) Integer page,
+    public ResponseEntity<List<Post>> findAll(@RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size) {
 
-        ResponseEntity<List<User>> responseEntity = null;
+        ResponseEntity<List<Post>> responseEntity = null;
 
-        List<User> users = new ArrayList<>();
+        List<Post> posts= new ArrayList<>();
 
-        Sort sortByName = Sort.by("name");
+        Sort sortById = Sort.by("id");
 
         if (page != null && size != null) {
 
             try {
-                Pageable pageable = PageRequest.of(page, size, sortByName);
-                Page<User> usersPaginados = userService.findAll(pageable);
-                users = usersPaginados.getContent();
-                responseEntity = new ResponseEntity<List<User>>(users, HttpStatus.OK);
+                Pageable pageable = PageRequest.of(page, size, sortById);
+                Page<Post> postsPaginados = postService.findAll(pageable);
+                posts= postsPaginados.getContent();
+                responseEntity = new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 
             } catch (Exception e) {
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -89,9 +86,9 @@ public class UserController {
 
             try {
 
-                users = userService.findAll(sortByName);
+                posts = postService.findAll(sortById);
 
-                responseEntity = new ResponseEntity<List<User>>(users, HttpStatus.OK);
+                responseEntity = new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 
             } catch (Exception e) {
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -101,12 +98,14 @@ public class UserController {
 
     }
 
+
+    //IMAGENES Y CREADO
     @PostMapping(consumes = "multipart/form-data")
     @Transactional
     public ResponseEntity<Map<String, Object>> insert(@Valid 
-                @RequestPart(name = "user") User user, 
+                @RequestPart(name = "post") Post post, 
                 BindingResult result,
-                @RequestPart(name = "fileUser", required = false) MultipartFile fileUser) throws IOException {
+                @RequestPart(name = "filePost", required = false) MultipartFile filePost) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -130,38 +129,36 @@ public class UserController {
 
         }
 
-        if(!fileUser.isEmpty()) {
-            String fileCode = fileUploadUtil.saveFile(fileUser.getOriginalFilename(), fileUser);
-            user.setImageUser(fileCode + "-" + fileUser.getOriginalFilename());
+        if(!filePost.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(filePost.getOriginalFilename(), filePost);
+            post.setImagePost(fileCode + "-" + filePost.getOriginalFilename());
 
             FileUploadResponse fileUploadResponse = FileUploadResponse
                         .builder()
-                        .fileName(fileCode + "-" + fileUser.getOriginalFilename())
-                        .downloadURI("/users/downloadFile/" + fileCode + "-" + fileUser.getOriginalFilename())
-                        .size(fileUser.getSize())
+                        .fileName(fileCode + "-" + filePost.getOriginalFilename())
+                        .downloadURI("/posts/downloadFile/" + fileCode + "-" + filePost.getOriginalFilename())
+                        .size(filePost.getSize())
                         .build();
 
-            // NOTA PARA EL GRUPO: Creo que debemos devolver la info y cuando implementemos el 
-            // security poner una validación que solo pueda descargar la imagen el propio usuario.
-            // preguntaremos a Victor (no stress)
+    
 
             responseAsMap.put("info de la imagen: ", fileUploadResponse);
         }
 
-        User userDB = userService.save(user);
+        Post postDB = postService.save(post);
 
         try {
 
-            if (userDB != null) {
+            if (postDB != null) {
 
-                String message = "El usuario se ha creado correctamente";
+                String message = "El post se ha creado correctamente";
                 responseAsMap.put("mensaje", message);
-                responseAsMap.put("usuario", userDB);
+                responseAsMap.put("post", postDB);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
 
             } else {
 
-                String message = "El usuario no se ha creado correctamente";
+                String message = "El post no se ha creado correctamente";
 
                 responseAsMap.put("mensaje", message);
 
@@ -183,8 +180,10 @@ public class UserController {
         return responseEntity;
     }
 
+
+    //BUSCAR POR ID USER -> BETTER SI LO PONEMOS POR NOMBRE 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> findById(@PathVariable(name = "id") Integer id) {
+    public ResponseEntity<Map<String, Object>> findByUserId(@PathVariable(name = "id") Integer id) {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
@@ -192,18 +191,18 @@ public class UserController {
 
         try {
 
-            User user = userService.findbyId(id);
+            List<Post> post = postService.findByUserId(id);
 
-            if (user != null) {
-                String successMessage = "Se ha encontrado el Usuario con id: " + id + " correctamente";
+            if (post != null) {
+                String successMessage = "Se ha encontrado el Post del usuario con id: " + id + " correctamente";
                 responseAsMap.put("mensaje", successMessage);
-                responseAsMap.put("user", user);
+                responseAsMap.put("post", post);
                 // responseAsMap.put("mascotas", cliente.getMascotas());
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
 
             } else {
 
-                String errorMessage = "No se ha encontrado el usuario con id: " + id;
+                String errorMessage = "No se ha encontrado el post del usuario con id: " + id;
                 responseAsMap.put("error", errorMessage);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.NOT_FOUND);
 
@@ -220,14 +219,16 @@ public class UserController {
         return responseEntity;
     }    
 
+    //ACTUALIZACION = RESOLVER PERMISOS 
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Map<String, Object>> update(
-            @Valid @RequestPart(name = "user") User user,
+            @Valid @RequestPart(name = "post") Post post,
             BindingResult result, 
-            @RequestPart(name = "fileUser", required = false) MultipartFile fileUser,
-            @RequestPart(name = "department", required = true) Department department,
-            @RequestPart(name = "yards", required = false) List<Yard> yards,
+            @RequestPart(name = "filePost", required = false) MultipartFile filePost,
+         
+            @RequestPart(name = "user", required = false) User user,
 
             @PathVariable(name = "id") Integer id) throws IOException {
 
@@ -248,52 +249,45 @@ public class UserController {
             return responseEntity;
         }
 
-        if(!fileUser.isEmpty()) {
-            String fileCode = fileUploadUtil.saveFile(fileUser.getOriginalFilename(), fileUser);
-            user.setImageUser(fileCode + "-" + fileUser.getOriginalFilename());
+        if(!filePost.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(filePost.getOriginalFilename(), filePost);
+            post.setImagePost(fileCode + "-" + filePost.getOriginalFilename());
 
             FileUploadResponse fileUploadResponse = FileUploadResponse
                         .builder()
-                        .fileName(fileCode + "-" + fileUser.getOriginalFilename())
-                        .downloadURI("/users/downloadFile/" + fileCode + "-" + fileUser.getOriginalFilename())
-                        .size(fileUser.getSize())
+                        .fileName(fileCode + "-" + filePost.getOriginalFilename())
+                        .downloadURI("/posts/downloadFile/" + fileCode + "-" + filePost.getOriginalFilename())
+                        .size(filePost.getSize())
                         .build();
 
             responseAsMap.put("info de la imagen: ", fileUploadResponse);
         }
 
-        user.setId(id);
-        User userDB = userService.save(user);
+        post.setId(id);
+        Post postDB = postService.save(post);
 
         
         try {
 
-            if (userDB != null) {
+            if (postDB != null) {
 
 
-                if(department != null) {
+                if(user!= null) {
 
-                        departmentService.save(department);
-                        userDB.setDepartment(department);
+                        userService.save(user);
+                        postDB.setUser(user);
                     }
 
-                if(yards.size() != 0) {
-                
-                    for(Yard yard : yards) {
-                        yardService.save(yard);
-                    }
-                    userDB.setYards(yards);
-                }
+              
 
-
-                String message = "El usuario se ha actualizado correctamente";
+                String message = "El post se ha actualizado correctamente";
                 responseAsMap.put("mensaje", message);
-                responseAsMap.put("usuario", userDB);
+                responseAsMap.put("post", postDB);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
 
             } else {
 
-                String errorMensaje = "El usuario no se ha actualizado correctamente";
+                String errorMensaje = "El post no se ha actualizado correctamente";
 
                 responseAsMap.put("mensaje", errorMensaje);
 
@@ -312,6 +306,8 @@ public class UserController {
 
     }
 
+    //BORRADO
+
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<String> delete(@PathVariable(name = "id") Integer id) {
@@ -319,15 +315,15 @@ public class UserController {
 
         try {
 
-            User user = userService.findbyId(id);
+            Post post = postService.findbyId(id);
 
-            if (user != null) {
+            if (post != null) {
    
-                userService.delete(user);
-                responseEntity = new ResponseEntity<String>("Usuario borrado exitosamente", HttpStatus.OK);
+                postService.delete(post);
+                responseEntity = new ResponseEntity<String>("Post borrado exitosamente", HttpStatus.OK);
             } else {
   
-                responseEntity = new ResponseEntity<String>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+                responseEntity = new ResponseEntity<String>("Post no encontrado", HttpStatus.NOT_FOUND);
             }
 
         } catch (DataAccessException e) {
@@ -341,9 +337,8 @@ public class UserController {
 
     }
 
-    // NOTA PARA EL GRUPO:
-    // Lo dicho antes, preguntamos a Victor si podemos hacer que 
-    // solo lo pueda descargar el usuario que la ha subido
+    
+    //ESTO NO ES NECESARIO 
     @GetMapping("/downloadFile/{fileCode}")
     public ResponseEntity<?> downloadFile(@PathVariable(name = "fileCode") String fileCode) {
 
@@ -371,3 +366,5 @@ public class UserController {
 
 
 }
+    
+

@@ -3,7 +3,10 @@ package com.example.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -24,6 +27,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -55,11 +59,16 @@ public class User implements Serializable {
     @NotEmpty(message = "El campo <ciudad> no puede estar vacía")
     private String city;
 
+    private List<String> hobbie;
+
+    private String phone;
+
     private String imageUser;
 
     // 1. RELACION USER-DEPARTMENT
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+
     private Department department;
 
     // 2. RELACION USER-YARDS (MANYTOMANY)
@@ -69,27 +78,14 @@ public class User implements Serializable {
         joinColumns = @JoinColumn(name = "user_id", nullable = false),
         inverseJoinColumns = @JoinColumn(name="yard_id", nullable = false)
     )
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     
     List<Yard> yards;
     
 
-    // 3. RELACION USER - HOBBIES
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
-    @JsonIgnore
-    private List<Hobbie> hobbies;
-
-    // 4. RELACION USER - PHONES
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
-    @JsonIgnore
-    private List<Phone> phones;
-
     // 5. RELACION USER - POSTS
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "user")
     @JsonIgnore
     private List<Post> posts;
 

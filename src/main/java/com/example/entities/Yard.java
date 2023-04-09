@@ -40,7 +40,7 @@ public class Yard implements Serializable {
 
     // 1. RELACION YARD-DEPARTMENT
 
-    @ManyToOne(fetch =FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch =FetchType.LAZY, cascade = CascadeType.MERGE)
     @JsonIgnore
     Department department; 
 
