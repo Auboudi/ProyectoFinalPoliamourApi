@@ -226,8 +226,7 @@ public class UserController {
             @Valid @RequestPart(name = "user") User user,
             BindingResult result, 
             @RequestPart(name = "fileUser", required = false) MultipartFile fileUser,
-            @RequestPart(name = "department", required = true) Department department,
-            @RequestPart(name = "yards", required = false) List<Yard> yards,
+
 
             @PathVariable(name = "id") Integer id) throws IOException {
 
@@ -270,6 +269,9 @@ public class UserController {
 
             if (userDB != null) {
 
+                Department department = userDB.getDepartment();
+
+                List<Yard> yards = userDB.getYards();
 
                 if(department != null) {
 
